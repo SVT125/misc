@@ -4,19 +4,22 @@ import java.util.concurrent.*;
 public class BirthdayParadoxSimulator {
 	public static void main(String[] args) throws Exception {
 		int n = Integer.parseInt(args[0]), simulations = Integer.parseInt(args[1]), sum = 0;
+		double expected = (1.2 * Math.sqrt(n)), mean;
 		ExecutorService exec = Executors.newCachedThreadPool();
 		List<Future<Integer>> results = new ArrayList<Future<Integer>>();
 		for( int i = 0; i < simulations; i++ ) {
 			Future<Integer> result = exec.submit(new BirthdayParadox(n));
 			results.add(result);
 		}
-		System.out.println("The expected number of results are: " + (1.2 * Math.sqrt(n)));
+		System.out.println("The expected number of results are: " + expected);
 		for( Future<Integer> result : results ) {
 			int attempts = result.get();
 			sum += attempts;
 		}
 		exec.shutdown();
-		System.out.println("The mean number of results are: " + (double)sum/(double)simulations);
+		mean = (double)sum /(double)simulations;
+		System.out.println("The mean number of results are: " + mean);
+		System.out.println("The difference in expectancy is: " + (mean - expected));
 	}
 }
 
